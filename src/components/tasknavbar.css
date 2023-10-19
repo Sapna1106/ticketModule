@@ -1,0 +1,54 @@
+/* Add this CSS to style the navigation bar */
+.task-navbar {
+    margin-left: 15%;
+    padding: 8px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    
+  }
+  
+  .task-navbar button {
+    padding: 0;
+    background-color: white; /* Blue color for active buttons */
+    color: #040303;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .task-navbar button:hover {
+    /* background-color: #0056b3;  */
+    color:rgb(34, 15, 181);
+  }
+  
+  /* Style for the active button */
+  .task-navbar button.active {
+    background-color: #3c3d3e;
+  }
+
+
+  .task-table {
+    margin-left: 15%;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .task-table th, .task-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .task-table th {
+    background-color: #3e4042;
+    color: #fff;
+  }
+  
+  .task-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .task-table tr:hover {
+    background-color: #ddd;
+  }
