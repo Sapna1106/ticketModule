@@ -4,27 +4,31 @@ import './tasknavbar.css'
 
 const UsersTask = () => {
   const tasks = useSelector((state) => state.tasks.tickets);
-  const [filter, setFilter] = useState('All'); // Default filter is 'All'
+  const [filter, setFilter] = useState('All'); 
 
-  // Function to filter tasks based on the selected option
   const filteredTasks = tasks.filter((task) => {
     if (filter === 'All') {
-      return true; // Show all tasks
+      return true;
     } else {
-      return task.status === filter; // Show tasks that match the selected status
+      return task.status === filter; 
     }
   });
 
   return (
     <>
-      <h1>User Task List</h1>
-      <div>
+      <h1>Users Task List</h1>
+      <div className='container'>
         <div className="task-navbar">
-          <button onClick={() => setFilter('All')}><h3>All</h3></button>
-          <button onClick={() => setFilter('To Do')}><h3>To Do</h3></button>
-          <button onClick={() => setFilter('Progress')}><h3>Progress</h3></button>
-          <button onClick={() => setFilter('On Hold')}><h3>On Hold</h3></button>
-          <button onClick={() => setFilter('Done')}><h3>Done</h3></button>
+          <div className='task-navbar-left'>
+            <button onClick={() => setFilter('All')}><h3>All</h3></button>
+            <button onClick={() => setFilter('To Do')}><h3>To Do</h3></button>
+            <button onClick={() => setFilter('Progress')}><h3>Progress</h3></button>
+            <button onClick={() => setFilter('On Hold')}><h3>On Hold</h3></button>
+            <button onClick={() => setFilter('Done')}><h3>Done</h3></button>
+          </div>
+          <div className="task-navbar-right">
+            <button ><h3>Customize</h3></button>
+          </div>
         </div>
         <table className="task-table">
           <thead>

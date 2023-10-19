@@ -10,11 +10,25 @@
   
   .task-navbar button {
     padding: 0;
-    background-color: white; /* Blue color for active buttons */
+    background-color: white; 
     color: #040303;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    
+  }
+
+  .task-navbar-left {
+    display: flex;
+    gap: 5%;
+    margin-left: 10px; 
+    flex-grow: 1; 
+  }
+
+  .task-navbar-right {
+    display: flex;
+    gap: 20px; 
+    margin-right: 10px; 
   }
   
   .task-navbar button:hover {
