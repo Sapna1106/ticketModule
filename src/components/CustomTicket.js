@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './customTicket.css'
+import { useNavigate } from 'react-router-dom';
 
 function CustomTicket() {
     const [formData, setFormData] = useState({
@@ -10,12 +11,24 @@ function CustomTicket() {
         description: '',
     });
 
+    const navigate = useNavigate();
+
     const datatypes = ['text', 'number', 'date', 'boolean', 'email', 'phone']; // List of predefined datatypes
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+    const handleCustomTicket = ()=>{
+        // dispatchEvent(addCustomTicket(formData));
+        setFormData({
+            fieldName: '',
+            datatype: 'text',
+            description: '',
+        });
+        navigate(`/my-tasks`);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,10 +78,16 @@ function CustomTicket() {
                         required
                     />
                 </Form.Group>
+                <div className="button-container">
+                    <Button variant="primary" type="cancel" align="left" onClick={()=> navigate(`/my-tasks`)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" align="right" onClick={handleCustomTicket}>
+                        Submit
+                    </Button>
+                </div>
 
-                <Button variant="primary" type="submit" className="custom-submit-button">
-                    Submit
-                </Button>
+                
             </Form>
         </div>
     );

@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector,  useDispatch } from 'react-redux';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import TaskView from './taskView';
 import './tasknavbar.css';
+import axios from "axios";
 import { Link } from 'react-router-dom';
+import {setTickets} from '../slice/taskSlice';
 
 const UsersTask = () => {
   const tasks = useSelector((state) => state.tasks.tickets);
   const [filter, setFilter] = useState('All');
   const [selectedTask, setSelectedTask] = useState(null);
   const [show, setShow] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClose = () => setShow(false);
 
@@ -22,9 +25,19 @@ const UsersTask = () => {
     if (filter === 'All') {
       return true;
     } else {
-      return task.status === filter;
+      return task.stage === filter;
     }
   });
+
+  useEffect(() => {
+    axios.get('http://localhost:8888/tickets')
+      .then((response) => {
+        dispatch(setTickets(response.data));
+      })
+      .catch((error) => {
+        console.error('Error fetching data from the backend', error);
+      });
+  }, [dispatch]);
 
   return (
     <>
@@ -61,13 +74,13 @@ const UsersTask = () => {
             <tr>
               <th>Task Name</th>
               <th>Ticket ID</th>
-              <th>Tags</th>
-              <th>Priority</th>
-              <th>Project Name</th>
-              <th>Created By</th>
-              <th>Status</th>
-              <th>Created At</th>
+              <th>Description</th>
               <th>End Date</th>
+              <th>End Time</th>
+              <th>Project</th>
+              <th>Assignee</th>
+              <th>Status</th>
+              <th>Priority</th>
             </tr>
           </thead>
           <tbody>
@@ -79,13 +92,13 @@ const UsersTask = () => {
                   </button>
                 </td>
                 <td>{task.ticketID}</td>
-                <td>{task.tags}</td>
-                <td>{task.priority}</td>
-                <td>{task.projectName}</td>
-                <td>{task.createdBy}</td>
-                <td>{task.status}</td>
-                <td>{task.createdAt}</td>
+                <td>{task.description}</td>
                 <td>{task.endDate}</td>
+                <td>{task.endTime}</td>
+                <td>{task.projectIn}</td>
+                <td>{task.assignee}</td>
+                <td>{task.stage}</td>
+                <td>{task.priority}</td>
               </tr>
             ))}
           </tbody>
