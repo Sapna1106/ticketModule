@@ -10,17 +10,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333; /* Set your desired background color */
-    padding: 10px; /* Add padding as needed */
-    color: #fff; /* Set the text color */
+    background-color: #333; 
+    padding: 10px; 
+    color: #fff; 
   }
 
   .navbar-left {
-    margin-left: 10px; /* Adjust the margin as needed */
+    margin-left: 20px; 
+    margin-top: 15px;
   }
   
   .navbar-center {
-    flex-grow: 1; /* Takes up remaining space in the center */
+    flex-grow: 1; 
     text-align: center;
   }
   
@@ -32,7 +33,7 @@
   
   .search-input {
     width: 100%;
-    max-width: 300px; /* Adjust the width as needed */
+    max-width: 300px; 
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;

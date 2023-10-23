@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
 import './createTicket.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreateTicket = () => {
+    let navigate = useNavigate();
+
   useEffect(() => {
     const selectElement = document.getElementById('project');
     const options = selectElement.getElementsByTagName('option');
+    
 
     for (let option of options) {
       const name = option.text;
@@ -62,10 +66,10 @@ const CreateTicket = () => {
         </select>
 
         <div className="button-container">
-          <button type="button" align="left" id="cancel">
+          <button type="button" align="left" id="cancel" onClick={() => navigate(`/my-tasks`)}>
             Cancel
           </button>
-          <button type="submit" id="create">
+          <button type="submit" align="right" id="create" >
             Create
           </button>
         </div>

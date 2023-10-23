@@ -7,10 +7,10 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div>
+      {/* <div>
         <h2>Innogent Training</h2>
-      </div>
-      <div>
+      </div> */}
+      <div className='sidebar-center'>
         <Link to="/dashboard" className="button" onClick={() => setProjectsDropdownOpen(false)}>Dashboard</Link>
         <Link to="/projects" className="button" onClick={() => setProjectsDropdownOpen(!isProjectsDropdownOpen)}>Projects
         {isProjectsDropdownOpen && (

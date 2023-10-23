@@ -1,0 +1,37 @@
+/* Style the labels */
+label {
+    display: block;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+  
+  /* Style the input fields */
+  input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Additional styling for specific input types */
+  input[type="date"],
+  input[type="time"] {
+    width: auto;
+  }
+  
+  /* Optional: Style labels and inputs in two columns */
+  .task-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .update-button {
+    background-color: #83daf6;
+    color: #0b0b0b;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }

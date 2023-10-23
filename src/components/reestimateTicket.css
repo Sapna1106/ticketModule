@@ -1,0 +1,56 @@
+/* Reset some default styles */
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+   */
+/* Style the container */
+.reestimate-ticket-container {
+    width: 500px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(31, 30, 30, 0.1);
+    text-align: center;
+    font-family: Arial;
+    font-size: 14px;
+    margin: 0 auto;
+    margin-top: 3%;
+    background-color: white;
+}
+
+/* Style the form header */
+.reestimate-ticket-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Style form fields */
+.reestimate-form-group {
+    margin-bottom: 20px;
+}
+
+.reestimate-form-label {
+    text-align: left;
+    display: block;
+    margin-top: 10px;
+    font-weight: normal;
+}
+
+.reestimate-select {
+    width: 100%;
+}
+
+/* Style the submit button */
+.reestimate-submit-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}

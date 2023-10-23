@@ -4,14 +4,16 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar">
+      <div className="navbar-left">
+        <h2>Innogent Training</h2>
+      </div>
       <div className="navbar-center">
         <input type="text" placeholder="Search" className="search-input" />
       </div>
       <div className="navbar-right">
-        <a className="navbar-brand" href="#">Your Logo</a>
         <Link to="/create-ticket" className="button">Create Ticket</Link>
-        {/* <a className="nav-link" href="#">Create Ticket</a> */}
+        <a className="navbar-brand" href="#">Notification</a>
         <a className="nav-link" href="#">Account Profile</a>
       </div>
     </nav>
