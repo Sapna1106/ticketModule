@@ -29,15 +29,15 @@ const UsersTask = () => {
     }
   });
 
-  useEffect(() => {
-    axios.get('http://localhost:8888/tickets')
-      .then((response) => {
-        dispatch(setTickets(response.data));
-      })
-      .catch((error) => {
-        console.error('Error fetching data from the backend', error);
-      });
-  }, [dispatch]);
+  // useEffect(() => {
+  //   axios.get('http://localhost:8888/tickets')
+  //     .then((response) => {
+  //       dispatch(setTickets(response.data));
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data from the backend', error);
+  //     });
+  // }, [dispatch]);
 
   return (
     <>

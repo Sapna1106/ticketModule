@@ -11,70 +11,97 @@ const CreateTicket = () => {
     description: '',
     endDate: '',
     endTime: '',
-    projectIn: 'project1', 
-    assignee: 'assignee1', 
-    stage: 'To Do', 
-    priority: 'High',
+    projectIn: 'project1',
+    assignees: [],
+    stage: 'To Do',
+    priority: 'HIGH',
   });
-  
+  const [selectedAssignees, setSelectedAssignees] = useState([]); 
+  const [searchQuery, setSearchQuery] = useState(''); 
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const handleAddTicket = async (e) => {
-  //   e.preventDefault();
-  //   dispatch(addTicket(ticketData));
-    
-  //   setTicketData({
-  //     taskName: '',
-  //     description: '',
-  //     endDate: '',
-  //     endTime: '',
-  //     projectIn: 'project1',
-  //     assignee: 'assignee1',
-  //     stage: 'To Do',
-  //     priority: 'High',
-  //   });
-  //   navigate(`/my-tasks`);                                                                                                                            
-  // };
   const handleAddTicket = async () => {
-    if (ticketData.taskName && ticketData.description && ticketData.endDate && ticketData.endTime && ticketData.project && ticketData.assignee &&  ticketData.status && ticketData.priority ) {
-      try {
-        const response = await axios.post('http://localhost:8888/tickets', ticketData);
-        const newTicket = response.data;
-        dispatch(addTicket(newTicket));
-
-        setTicketData({ 
-          taskName: '',
-          description: '',
-          endDate: '',
-          endTime: '',
-          projectIn: 'project1', 
-          assignee: 'assignee1', 
-          stage: 'To Do', 
-          priority: 'High', 
-        }); 
-        navigate(`/my-tasks`); 
-      } catch (error) {
-        console.error('Error saving ticket data:', error);
-      }
+    try {
+      const response = await axios.post('http://localhost:8888/tickets', ticketData);
+      const newTicket = response.data;
+      dispatch(addTicket(newTicket));
+      resetForm();
+      navigate(`/my-tasks`);
+    } catch (error) {
+      console.error('Error saving ticket data:', error);
     }
+  };
+  const resetForm = () => {
+    setTicketData({
+      taskName: '',
+      description: '',
+      endDate: '',
+      endTime: '',
+      projectIn: 'project1',
+      assignees: [],
+      stage: 'To Do',
+      priority: 'HIGH',
+    });
+    setSelectedAssignees([]); // Clear the list of selected assignees
+  };
+  const handleAssigneeSelect = (assignee) => {
+    if (!selectedAssignees.includes(assignee)) {
+      setSelectedAssignees([...selectedAssignees, assignee]);
+      setTicketData({
+        ...ticketData,
+        assignees: [...selectedAssignees, assignee],
+      });
+    }
+  };
+  const handleAssigneeRemove = (assignee) => {
+    const updatedAssignees = selectedAssignees.filter((name) => name !== assignee);
+    setSelectedAssignees(updatedAssignees);
+    setTicketData({
+      ...ticketData,
+      assignees: updatedAssignees,
+    });
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setTicketData({
-      ...ticketData,
-      [name]: value,
-    });
+    if (name === 'assigneesSearch') {
+      // Handle the search query input
+      setSearchQuery(value);
+    } else if (name === 'assignees') {
+      // Handle multiple assignee selection
+      const selectedAssignee = e.target.value;
+      if (selectedAssignee) {
+        handleAssigneeSelect(selectedAssignee);
+        e.target.value = ''; // Clear the selection to make it work like a toggle
+      }
+    } else {
+      setTicketData({
+        ...ticketData,
+        [name]: value,
+      });
+    }
   };
-
-
+   // Filter Assignees based on the search query
+   const filteredAssignees = [
+    'Assignee 1',
+    'Assignee 2',
+    'Assignee 3',
+    'Assignee 4',
+    'Assignee 5',
+    'Assignee 6',
+    'Assignee 7',
+    'Assignee 8',
+    'Assignee 9',
+    // Add your assignee options here
+  ].filter((assignee) =>
+    assignee.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
-    
     <div className="ticket-form">
       <h2>Add Ticket</h2>
-      <form>
+      <form onSubmit={handleAddTicket}>
         <div className="form-group">
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="taskName">Name:</label>
           <input
             type="text"
             name="taskName"
@@ -128,18 +155,44 @@ const CreateTicket = () => {
             <option value="project3">Project 3</option>
           </select>
         </div>
-        <div className="form-group">
-          <label htmlFor="assignee">Assignee:</label>
-          <select
-            name="assignee"
-            value={ticketData.assignee}
+         {/* Assignee selection with search field */}
+         <div className="form-group">
+          <label htmlFor="assignees">Assignee:</label>
+          <input
+            type="text"
+            name="assigneesSearch"
+            value={searchQuery}
             onChange={handleInputChange}
-            required
+            placeholder="Search Assignee"
+          />
+          <select
+            name="assignees"
+            value={[]}
+            onChange={handleInputChange}
+            multiple
           >
-            <option value="assignee1">Assignee 1</option>
-            <option value="assignee2">Assignee 2</option>
-            <option value="assignee3">Assignee 3</option>
+            {filteredAssignees.map((assignee) => (
+              <option key={assignee} value={assignee}>
+                {assignee}
+              </option>
+            ))}
           </select>
+        </div>
+        <div className="form-group">
+          <label>Selected Assignees:</label>
+          <div className="selected-assignees">
+            {selectedAssignees.map((assignee, index) => (
+              <div key={assignee} className="selected-assignee">
+                <span>{assignee}</span>
+                <button
+                  type="button"
+                  onClick={() => handleAssigneeRemove(assignee)}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="stage">Status:</label>
@@ -149,10 +202,10 @@ const CreateTicket = () => {
             onChange={handleInputChange}
             required
           >
-            <option value="To Do">To Do</option>
-            <option value="In Progress">In Progress</option>
+            <option value="ToDo">To Do</option>
+            <option value="InProgress">In Progress</option>
             <option value="Complete">Complete</option>
-            <option value="On Hold">On Hold</option>
+            <option value="OnHold">On Hold</option>
           </select>
         </div>
         <div className="form-group">
@@ -163,22 +216,26 @@ const CreateTicket = () => {
             onChange={handleInputChange}
             required
           >
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
           </select>
         </div>
         <div className="button-container">
-           <button type="button" align="left" id="cancel" onClick={() => navigate(`/my-tasks`)}>
-             Cancel
-           </button>
-           <button type="submit" align="right" id="create" onClick={handleAddTicket}>
+          <button
+            type="button"
+            align="left"
+            id="cancel"
+            onClick={() => navigate(`/my-tasks`)}
+          >
+            Cancel
+          </button>
+          <button type="submit" align="right" id="create">
             Create
           </button>
         </div>
       </form>
     </div>
   );
-}
-
+};
 export default CreateTicket;
