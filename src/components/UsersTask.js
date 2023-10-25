@@ -13,12 +13,14 @@ const UsersTask = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
+  // const navigate= useNavigate();
 
   const handleClose = () => setShow(false);
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
     setShow(true);
+    // navigate(`/task-view/${task.id}`)
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -29,15 +31,15 @@ const UsersTask = () => {
     }
   });
 
-  // useEffect(() => {
-  //   axios.get('http://localhost:8888/tickets')
-  //     .then((response) => {
-  //       dispatch(setTickets(response.data));
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching data from the backend', error);
-  //     });
-  // }, [dispatch]);
+  useEffect(() => {
+    axios.get('http://localhost:8888/tickets')
+      .then((response) => {
+        dispatch(setTickets(response.data));
+      })
+      .catch((error) => {
+        console.error('Error fetching data from the backend', error);
+      });
+  }, [dispatch]);
 
   return (
     <>
@@ -51,7 +53,7 @@ const UsersTask = () => {
             <button onClick={() => setFilter('To Do')}>
               <h3>To Do</h3>
             </button>
-            <button onClick={() => setFilter('Progress')}>
+            <button onClick={() => setFilter('In Progress')}>
               <h3>Progress</h3>
             </button>
             <button onClick={() => setFilter('On Hold')}>
@@ -75,9 +77,10 @@ const UsersTask = () => {
               <th>Task Name</th>
               <th>Ticket ID</th>
               <th>Description</th>
+              <th>Start Date</th>
               <th>End Date</th>
-              <th>End Time</th>
               <th>Project</th>
+              <th>Created By</th>
               <th>Assignee</th>
               <th>Status</th>
               <th>Priority</th>
@@ -87,16 +90,21 @@ const UsersTask = () => {
             {filteredTasks.map((task) => (
               <tr key={task.id}>
                 <td>
+                  {/* <Link to={`/task-view/${task.id}`} onClick={() => handleTaskClick(task)}>
+                    {task.name}
+                  </Link> */}
                   <button onClick={() => handleTaskClick(task)}>
-                    {task.taskName}
+                    {task.name}
                   </button>
                 </td>
-                <td>{task.ticketID}</td>
+                <td>{task.id}</td>
                 <td>{task.description}</td>
+                <td>{task.startDate}</td>
                 <td>{task.endDate}</td>
-                <td>{task.endTime}</td>
-                <td>{task.projectIn}</td>
-                <td>{task.assignee}</td>
+                <td>{task.projectIn.name}</td>
+                <td>{task.createdBy}</td>
+                <td></td>
+                {/* <td>{task.usersAssignedTo.firstName}</td> */}
                 <td>{task.stage}</td>
                 <td>{task.priority}</td>
               </tr>
@@ -111,7 +119,8 @@ const UsersTask = () => {
             <Offcanvas.Title>Task Details</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <TaskView task={selectedTask} />
+          <TaskView task={selectedTask} id={selectedTask.id} closeOffCanvas={handleClose}/> 
+          {/* <Link to={`/task-view/${selectedTask.id}`} /> */}
           </Offcanvas.Body>
         </Offcanvas>
       )}

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import './customTicket.css'
+import './customTicket.css';
 import { useNavigate } from 'react-router-dom';
 
 function CustomTicket() {
@@ -20,43 +18,50 @@ function CustomTicket() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleCustomTicket = ()=>{
-        // dispatchEvent(addCustomTicket(formData));
+    const handleCustomTicket = () => {
+        // Dispatch action or perform any necessary actions with formData
         setFormData({
             fieldName: '',
             datatype: 'text',
             description: '',
         });
         navigate(`/my-tasks`);
-    }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        handleCustomTicket();
     };
 
     return (
         <div className="custom-ticket-container">
             <h1 className="custom-ticket-header">Custom Ticket Form</h1>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="custom-form-group">
-                    <Form.Label className="custom-form-label">Field Name</Form.Label>
-                    <Form.Control
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label className="custom-form-label" htmlFor="fieldName">
+                        Field Name
+                    </label>
+                    <input
                         type="text"
+                        className="form-control"
+                        id="fieldName"
                         name="fieldName"
                         value={formData.fieldName}
                         onChange={handleChange}
                         required
                     />
-                </Form.Group>
+                </div>
 
-                <Form.Group className="custom-form-group">
-                    <Form.Label className="custom-form-label">Datatype</Form.Label>
-                    <Form.Control
-                        as="select"
+                <div className="form-group">
+                    <label className="custom-form-label" htmlFor="datatype">
+                        Datatype
+                    </label>
+                    <select
                         name="datatype"
+                        className="form-control"
+                        id="datatype"
                         value={formData.datatype}
                         onChange={handleChange}
-                        className="custom-select"
                         required
                     >
                         {datatypes.map((type, index) => (
@@ -64,31 +69,36 @@ function CustomTicket() {
                                 {type}
                             </option>
                         ))}
-                    </Form.Control>
-                </Form.Group>
+                    </select>
+                </div>
 
-                <Form.Group className="custom-form-group">
-                    <Form.Label className="custom-form-label">Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
+                <div className="form-group">
+                    <label className="custom-form-label" htmlFor="description">
+                        Description
+                    </label>
+                    <textarea
                         name="description"
+                        className="form-control"
+                        id="description"
                         value={formData.description}
                         onChange={handleChange}
                         rows={3}
                         required
                     />
-                </Form.Group>
-                <div className="button-container">
-                    <Button variant="primary" type="cancel" align="left" onClick={()=> navigate(`/my-tasks`)}>
-                        Cancel
-                    </Button>
-                    <Button variant="primary" type="submit" align="right" onClick={handleCustomTicket}>
-                        Submit
-                    </Button>
                 </div>
-
-                
-            </Form>
+                <div className="button-container">
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => navigate(`/my-tasks`)}
+                    >
+                        Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                        Submit
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

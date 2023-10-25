@@ -26,7 +26,7 @@ function App() {
           <Route  path="/reports">Reports</Route>
           <Route  path="/more" >More</Route>
           <Route  path="/create-ticket" element={<CreateTicket />} />  
-          <Route  path="/task-view" element={<TaskView />} />  
+          <Route  path="/task-view/:id" element={<TaskView />} />  
           <Route  path="/custom-ticket" element={<CustomTicket />} />
           <Route  path="/reestimate-ticket" element={<ReestimateTicket />} />     
         </Routes>
