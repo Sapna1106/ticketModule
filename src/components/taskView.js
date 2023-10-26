@@ -1,24 +1,23 @@
-import React, { useState , useEffect} from 'react';
-import './taskView.css'; 
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { updateTask } from '../slice/taskSlice';
-import axios from 'axios';
-// import { format } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import "./taskView.css";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateTask } from "../slice/taskSlice";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
 
 const TaskView = ({ task, id, closeOffCanvas }) => {
   const navigate = useNavigate();
-  const dispatch= useDispatch();
+  const dispatch = useDispatch();
   const [editableTask, setEditableTask] = useState({ ...task });
+  const [date, setDate] = useState(new Date());
+  // const id=parseInt(id, 10)
 
   useEffect(() => {
     loadTask(id);
   }, [id]);
 
-  // function formatDate(date) {
-  //   return format(new Date(date), "yyyy-MM-dd'T'HH:mm:ss.SSS");
-  // }
-  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditableTask({
@@ -31,7 +30,7 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
     // e.preventDefault();
     try {
       await axios.put(`http://localhost:8888/tickets/${id}`, editableTask);
-      dispatch(updateTask(editableTask));
+      dispatch(updateTask({id: id,updatedTask: editableTask}));
       closeOffCanvas();
       // navigate("/my-tasks");
     } catch (error) {
@@ -48,17 +47,18 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
     }
   };
 
-  console.log("Task prop:", task); 
-  console.log("Editable Task:", editableTask); 
+  // console.log("Task prop:", task);
+  // console.log("Editable Task:", editableTask);
+  
   return (
-    <div className="task-info"> 
+    <div className="task-info">
       <label>
         Name:
         <input
           type="text"
           className="name-input"
           name="name"
-          value={editableTask.name }
+          value={editableTask.name}
           onChange={handleInputChange}
         />
       </label>
@@ -72,25 +72,37 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
           onChange={handleInputChange}
         />
       </label>
+      <div>
       <label>
         Start Date:
-        <input
-          type="date"
-          className="startDate-input"
-          name="startDate"
+        <DatePicker
+          selected={date}
           value={editableTask.startDate}
-          // value={formatDate(editableTask.startDate)}
-          onChange={handleInputChange}
+          onChange={(date) =>
+            setEditableTask({ ...editableTask, startDate: date })
+          }
+          dateFormat="yyyy-MM-dd, yyyy-MM-dd'T'HH:mm:ss.SSSX"
+          showTimeSelect
+          minTime={new Date(0, 0, 0, 12, 30)}
+          maxTime={new Date(0, 0, 0, 19, 0)}
         />
       </label>
+    </div>
       <label>
         End Date:
-        <input
-          type="date"
-          className="endDate-input"
-          name="endDate"
+        <DatePicker
+          selected={date}
           value={editableTask.endDate}
-          onChange={handleInputChange}
+          onChange={(date) => {
+            setEditableTask({
+              ...editableTask,
+              endDate: date, // Update the endDate in editableTask
+            });
+          }}
+          dateFormat="yyyy-MM-dd'T'HH:mm:ss.SSSX, yyyy-MM-dd'T'HH:mm:ss.SSS, EEE, dd MMM yyyy HH:mm:ss zzz, yyyy-MM-dd"
+          showTimeSelect
+          minTime={new Date(0, 0, 0, 12, 30)}
+          maxTime={new Date(0, 0, 0, 19, 0)}
         />
       </label>
       <label>
@@ -119,7 +131,7 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
           type="text"
           className="assignee-input"
           name="assignee"
-         value={editableTask.usersAssignedTo.firstName}
+          value={editableTask.usersAssignedTo.firstName}
           onChange={handleInputChange}
         />
       </label>
@@ -148,10 +160,13 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
           <option value="LOW">LOW</option>
         </select>
       </label>
-      <button className="update-button" onClick={() => navigate(`/reestimate-ticket`)}>
+      <button
+        className="update-button"
+        onClick={() => navigate(`/reestimate-ticket`)}
+      >
         Re-estimation
       </button>
-      <button className="update-button" onClick={()=> handleUpdateClick()}>
+      <button className="update-button" onClick={() => handleUpdateClick()}>
         Update
       </button>
     </div>
