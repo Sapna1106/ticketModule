@@ -8,8 +8,26 @@ import CreateTicket from './components/createTicket';
 import TaskView from './components/taskView';
 import CustomTicket from './components/CustomTicket';
 import ReestimateTicket from './components/ReestimateTicket';
+import React, { useEffect } from "react";
+import {  useDispatch } from "react-redux";
+import TicketService from './services/TicketService';
+import {setUserList, setprojectList} from './slice/taskSlice';
 
 function App() {
+  const dispatch=useDispatch();
+  useEffect(() => {
+    TicketService.fetchProjectList().then((response)=>{
+      console.log(response.data)
+      dispatch(setprojectList(response.data));
+     }).catch((error) => {
+       console.log(error);
+     })
+    TicketService.fetchUserList().then((response)=>{
+      dispatch(setUserList(response.data));
+     }).catch((error) => {
+       console.log(error);
+     })
+  },[]);
   return (
     <div className="App">
       <Router>

@@ -12,7 +12,7 @@ const Navbar = () => {
         <input type="text" placeholder="Search" className="search-input" />
       </div>
       <div className="navbar-right">
-        <Link to="/create-ticket" className="button">Create Ticket</Link>
+        <Link to="/create-ticket" className="buttons">Create Ticket</Link>
         <a className="navbar-brand" href="#">Notification</a>
         <a className="nav-link" href="#">Account Profile</a>
       </div>

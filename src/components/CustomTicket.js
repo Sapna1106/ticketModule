@@ -1,168 +1,180 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addCustomField, updateFieldValue } from '../slice/customTaskSlice';
-import './customTicket.css';
+import { Input, Select, Button, Divider, Tag, Row, Col, Layout } from 'antd';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-const CustomTicket = () => {
-  const fields = useSelector((state) => state.customFields.fields);
-  const formData = useSelector((state) => state.customFields.formData);
-  const dataTypes = useSelector((state) => state.dataTypes);
-  const dispatch = useDispatch();
+const { Option } = Select;
+const { Content } = Layout;
 
-  const [newFieldName, setNewFieldName] = useState('');
+const CustomFieldForm = () => {
+  const [fieldName, setFieldName] = useState('');
+  const [fieldType, setFieldType] = useState('number');
+  const [fieldOptions, setFieldOptions] = useState([]);
   const [newOption, setNewOption] = useState('');
-  const [selectedFieldType, setSelectedFieldType] = useState('text');
-  const [options, setOptions] = useState([]); 
-
-  const handleAddField = () => {
-    if (newFieldName.trim() !== '') {
-      dispatch(addCustomField({ dataType: selectedFieldType, fieldName: newFieldName }));
-      setNewFieldName('');
-      setOptions([]);
-    }
-  };
+  const [selectedOption, setSelectedOption] = useState('');
+  const dataTypes = useSelector((state) => state.dataTypes);
+  const [displayNewField, setDisplayNewField] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const navigate= useNavigate();
 
   const handleAddOption = () => {
-    if (newOption.trim() !== '') {
-      handleFieldChange(newFieldName, [...(formData[newFieldName] || []), { label: newOption, selected: false }]);
+    if (newOption) {
+
+      setFieldOptions([...fieldOptions, newOption]);
       setNewOption('');
-      setOptions([...options, { label: newOption, selected: false }]); 
     }
   };
 
-  const handleOptionSelect = (fieldName, index) => {
-    if (formData[fieldName]) {
-      const updatedOptions = formData[fieldName].map((option, optionIndex) => {
-        if (optionIndex === index) {
-          option.selected = !option.selected;
-        }
-        return option;
-      });
-  
-      handleFieldChange(fieldName, updatedOptions);
+  const handleAddCustomField = () => {
+    if (fieldName && fieldType) {
+      if (fieldType === 'single-select' && fieldOptions.length > 0 ) {
+        setSelectedOption(fieldOptions[0]); 
+      }
+      setDisplayNewField(true);
+      setButtonClicked(true);
+      
     }
   };
 
-  const handleFieldChange = (fieldName, value) => {
-    dispatch(updateFieldValue({ fieldName, value }));
-  };
+  const handleCancel = () => {
+    navigate('/my-tasks');
+  }
 
-  const renderFormFields = () => {
-    return fields.map((field, index) => {
-      const { dataType, fieldName } = field;
-      let inputField;
+  let fieldTypeInput = null;
 
-      if (dataType === 'text') {
-        inputField = (
-          <input
-            type="text"
-            placeholder={`Enter ${fieldName}`}
-            value={formData[fieldName] || ''}
-            onChange={(e) => handleFieldChange(fieldName, e.target.value)}
-          />
-        );
-      } else if (dataType === 'date') {
-        inputField = (
-          <input
-            type="date"
-            value={formData[fieldName] || ''}
-            onChange={(e) => handleFieldChange(fieldName, e.target.value)}
-          />
-        );
-      } else if (dataType === 'number') {
-        inputField = (
-          <input
-            type="number"
-            placeholder={`Enter ${fieldName}`}
-            value={formData[fieldName] || ''}
-            onChange={(e) => handleFieldChange(fieldName, e.target.value)}
-          />
-        );
-      } else if (dataType === 'boolean') {
-        inputField = (
-          <input
-            type="checkbox"
-            checked={formData[fieldName] || false}
-            onChange={(e) => handleFieldChange(fieldName, e.target.checked)}
-          />
-        );
-      } else if (dataType === 'single-select' || dataType === 'multi-select') {
-        inputField = (
-          <div>
-            {formData[fieldName] && formData[fieldName].map((option, optionIndex) => (
-              <div key={optionIndex}>
-                <input
-                  type="radio"
-                  name={`${fieldName}-${optionIndex}`}
-                  checked={option.selected}
-                  onChange={() => handleOptionSelect(fieldName, optionIndex)}
-                />
-                {option.label}
-              </div>
+  switch (fieldType) {
+    case 'number':
+      fieldTypeInput = <Input type="number" placeholder="Enter a number" />;
+      break;
+    case 'text':
+      fieldTypeInput = <Input placeholder="Enter text" />;
+      break;
+    case 'single-select':
+      fieldTypeInput = (
+        <div>
+          <label>
+            Options:
+            {fieldOptions.map((option, index) => (
+              <Tag
+                key={index}
+                color={option === selectedOption ? 'blue' : 'default'}
+                onClick={() => setSelectedOption(option)}
+              >
+              {option}
+              </Tag>
             ))}
-            <input
-              type="text"
-              placeholder="Add Option"
+            <Button onClick={handleAddOption} >
+              Add Option
+            </Button>
+            <Input
               value={newOption}
               onChange={(e) => setNewOption(e.target.value)}
+              placeholder="Enter a new option"
             />
-            <button onClick={handleAddOption}>Add Option</button>
-            <div>
-                <strong>Options:</strong>
-                <ul>
-                    {options.map((option, optionIndex) => (
-                    <label key={optionIndex}>
-                        <input
-                        type="checkbox"
-                        checked={option.selected}
-                        onChange={() => handleOptionSelect(fieldName, optionIndex)}
-                        />
-                        {option.label}
-                    </label>
-                    ))}
-                </ul>
-            </div>
-          </div>
-        );
-      } else {
-        inputField = <div>Unsupported data type: {dataType}</div>;
-      }
-
-      return (
-        <div key={index}>
-          <label>{fieldName}</label>
-          {inputField}
+          </label>
         </div>
       );
-    });
-  };
+      break;
+    case 'date':
+      fieldTypeInput = <Input type="date" placeholder="Select a date" />;
+      break;
+      // case 'multi-select': 
+      // fieldTypeInput = (
+      //   <div>
+      //     <label>
+      //       Options:
+      //       {fieldOptions.map((option, index) => (
+      //         <Tag
+      //           key={index}
+      //           color={selectedOptions.includes(option) ? 'blue' : 'default'}
+      //           onClick={() => toggleSelectOption(option)}
+      //         >
+      //           {option}
+      //         </Tag>
+      //       ))}
+      //     </label>
+      //     <Button onClick={handleAddOption}>
+      //       Add Option
+      //     </Button>
+      //     <Input
+      //       value={newOption}
+      //       onChange={(e) => setNewOption(e.target.value)}
+      //       placeholder="Enter a new option"
+      //     />
+      //     {selectedOptions.length > 0 && (
+      //       <div>
+      //         <label>
+      //           Selected Fields:
+      //           {selectedOptions.map((selected, index) => (
+      //             <Input
+      //               key={index}
+      //               value={selected}
+      //               placeholder="Enter text"
+      //               onChange={(e) => updateSelectedOption(e.target.value, index)}
+      //             />
+      //           ))}
+      //         </label>
+      //       </div>
+      //     )}
+      //   </div>
+      // );
+      break;
+
+    default:
+      fieldTypeInput = null;
+  }
 
   return (
-    <div className="custom-ticket-container">
-      <h2 className="custom-ticket-header">Custom Ticket</h2>
-      <div>
-        <input
-          type="text"
-          placeholder="Field Name"
-          value={newFieldName}
-          onChange={(e) => setNewFieldName(e.target.value)}
-        />
-        <select
-          className="custom-select"
-          value={selectedFieldType}
-          onChange={(e) => setSelectedFieldType(e.target.value)}
-        >
-          {dataTypes.map((dataType) => (
-            <option key={dataType} value={dataType}>
-              {dataType}
-            </option>
-          ))}
-        </select>
-        <button className="custom-submit-button" onClick={handleAddField}>Add Field</button>
-      </div>
-      {renderFormFields()}
-    </div>
+    <Layout style={{ height: '100vh', backgroundColor: 'white' }}>
+      <Content style={{ marginTop: '50px',padding: '20px',alignItems: 'center' }}>
+        <div>
+          <div>
+            <label>
+              <h2>Custom Field</h2>
+            </label>
+          </div>
+
+          <div>
+            <label>
+              Field Name:
+              <Input value={fieldName} onChange={(e) => setFieldName(e.target.value)} />
+            </label>
+          </div>
+
+          <div>
+            <label>
+              Field Type:
+              <Select value={fieldType} onChange={setFieldType}>
+                {dataTypes.map((dataType, index) => (
+                  <Option key={index} value={dataType}>
+                    {dataType}
+                  </Option>
+                ))}
+              </Select>
+              <Button onClick={handleAddCustomField}  disabled={!fieldName || !fieldType}>Add</Button>
+            </label>
+          </div>
+
+          {displayNewField && (
+            <div>
+              <label>
+                {fieldName}
+                {fieldTypeInput}
+              </label>
+            </div>
+          )}
+
+          <Divider />
+          <Button onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button type="primary" onClick={handleAddCustomField}>
+            Add Custom Field
+          </Button>
+        </div>
+      </Content>
+    </Layout>
   );
 };
 
-export default CustomTicket;
+export default CustomFieldForm;

@@ -19,7 +19,7 @@
   }
 
   /* Transparent button style */
-  .button {
+  .buttons {
     text-decoration: none;
     display: block;
     padding: 10px 20px;
@@ -30,13 +30,13 @@
   }
   
   /* Change the color when button is active (clicked) */
-  .button:active {
+  .buttons:active {
   background-color: whitesmoke; /* Change to your desired click color */
   color: #23138e;
 }
   
   /* Change the color when button is hovered */
-  .button:hover {
+  .buttons:hover {
     background-color: rgb(169, 227, 241); /* Change to your desired hover color */
     color: white;
   }

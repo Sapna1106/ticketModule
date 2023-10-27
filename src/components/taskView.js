@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import "./taskView.css";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Button, Input, Select, DatePicker, Form } from "antd";
+import { useSelector, useDispatch } from "react-redux";
 import { updateTask } from "../slice/taskSlice";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios";
+import TicketService from '../services/TicketService';
+import moment from "moment"; 
 
-const TaskView = ({ task, id, closeOffCanvas }) => {
-  const navigate = useNavigate();
+const { Option } = Select;
+
+const TaskView = ({ task, closeDrawer }) => {
+  // console.log(task);
+  const users = useSelector((state) => state.tasks.users);
+  const projects = useSelector((state) => state.tasks.projects);
   const dispatch = useDispatch();
   const [editableTask, setEditableTask] = useState({ ...task });
-  const [date, setDate] = useState(new Date());
-  // const id=parseInt(id, 10)
+  const id = task.id;
 
   useEffect(() => {
     loadTask(id);
@@ -26,150 +27,111 @@ const TaskView = ({ task, id, closeOffCanvas }) => {
     });
   };
 
-  const handleUpdateClick = async (e) => {
-    // e.preventDefault();
-    try {
-      await axios.put(`http://localhost:8888/tickets/${id}`, editableTask);
-      dispatch(updateTask({id: id,updatedTask: editableTask}));
-      closeOffCanvas();
-      // navigate("/my-tasks");
-    } catch (error) {
+  const handleUpdateClick = async () => {
+    TicketService.updateTicket(id,editableTask)
+    .then(() => {
+      dispatch(updateTask({ id: id, updatedTask: editableTask }));
+      closeDrawer();
+    })
+    .catch ((error) => {
       console.error("Error updating Task:", error.message);
-    }
+    });
   };
 
-  const loadTask = async (e) => {
-    try {
-      const response = await axios.get(`http://localhost:8888/tickets/${id}`);
+  const loadTask = async () => {
+    TicketService.loadTicket(id)
+    .then((response) => {
       setEditableTask(response.data);
-    } catch (error) {
+    })
+    .catch ((error) => {
       console.error("Error loading task data:", error.message);
-    }
+    });
   };
+  // console.log(editableTask);
 
-  // console.log("Task prop:", task);
-  // console.log("Editable Task:", editableTask);
-  
   return (
-    <div className="task-info">
-      <label>
-        Name:
-        <input
-          type="text"
-          className="name-input"
+    <Form className="task-info">
+      <Form.Item label="Name">
+        <Input
           name="name"
-          value={editableTask.name}
+          value={task.name}
           onChange={handleInputChange}
         />
-      </label>
-      <label>
-        Description:
-        <input
-          type="text"
-          className="description-input"
+      </Form.Item>
+      <Form.Item label="Status">
+        <Select
+          name="stage"
+          value={task.stage}
+          onChange={(value) => handleInputChange({ target: { name: "stage", value } })}
+        >
+          <Select.Option value="To Do">To Do</Select.Option>
+          <Select.Option value="In Progress">In Progress</Select.Option>
+          <Select.Option value="Done">Done</Select.Option>
+          <Select.Option value="On Hold">On Hold</Select.Option>
+        </Select>
+      </Form.Item>
+      <Form.Item label="Description">
+        <Input.TextArea
           name="description"
-          value={editableTask.description}
+          value={task.description}
           onChange={handleInputChange}
         />
-      </label>
-      <div>
-      <label>
-        Start Date:
+      </Form.Item>
+      <Form.Item label="End Date">
         <DatePicker
-          selected={date}
-          value={editableTask.startDate}
-          onChange={(date) =>
-            setEditableTask({ ...editableTask, startDate: date })
+          value={
+            editableTask.endDate ? moment(editableTask.endDate) : null
           }
-          dateFormat="yyyy-MM-dd, yyyy-MM-dd'T'HH:mm:ss.SSSX"
-          showTimeSelect
-          minTime={new Date(0, 0, 0, 12, 30)}
-          maxTime={new Date(0, 0, 0, 19, 0)}
-        />
-      </label>
-    </div>
-      <label>
-        End Date:
-        <DatePicker
-          selected={date}
-          value={editableTask.endDate}
-          onChange={(date) => {
+          onChange={(date, dateString) => {
             setEditableTask({
               ...editableTask,
-              endDate: date, // Update the endDate in editableTask
+              endDate: dateString,
             });
           }}
-          dateFormat="yyyy-MM-dd'T'HH:mm:ss.SSSX, yyyy-MM-dd'T'HH:mm:ss.SSS, EEE, dd MMM yyyy HH:mm:ss zzz, yyyy-MM-dd"
-          showTimeSelect
-          minTime={new Date(0, 0, 0, 12, 30)}
-          maxTime={new Date(0, 0, 0, 19, 0)}
+          format="YYYY-MM-DD"
         />
-      </label>
-      <label>
-        Project:
-        <input
-          type="text"
-          className="project-input"
-          name="projectIn"
-          value={editableTask.projectIn.name}
-          onChange={handleInputChange}
-        />
-      </label>
-      <label>
-        Created By:
-        <input
-          type="text"
-          className="createdBy-input"
+      </Form.Item>
+      <Form.Item label="Show Project" name="projectIn" initialValue={task.projectIn.name}>
+        <Select mode="single" placeholder="Project Name" maxTagCount={3} allowClear style={{ width: '100%' }}>
+          {projects.map(project => (
+            <Option key={project.id} value={project.id}>
+              {project.name}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item label="Created By">
+        <Input
           name="createdBy"
           value={editableTask.createdBy}
           onChange={handleInputChange}
         />
-      </label>
-      <label>
-        Assignee:
-        <input
-          type="text"
-          className="assignee-input"
-          name="assignee"
-          value={editableTask.usersAssignedTo.firstName}
-          onChange={handleInputChange}
-        />
-      </label>
-      <label>
-        Status:
-        <select
-          name="stage"
-          value={editableTask.stage}
-          onChange={handleInputChange}
-        >
-          <option value="To Do">To Do</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Done">Done</option>
-          <option value="On Hold">On Hold</option>
-        </select>
-      </label>
-      <label>
-        Priority:
-        <select
+      </Form.Item>
+      <Form.Item label="Select Users" name="usersAssignedTo" initialValue={editableTask.usersAssignedTo.firstName}>
+        <Select mode="multiple" placeholder="Assignee" maxTagCount={3} allowClear style={{ width: '100%' }}>
+          {users.map(user => (
+            <Option key={user.id} value={user.id}>
+              {user.firstName}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      <Form.Item label="Priority">
+        <Select
           name="priority"
           value={editableTask.priority}
-          onChange={handleInputChange}
+          onChange={(value) => handleInputChange({ target: { name: "priority", value } })}
         >
-          <option value="HIGH">HIGH</option>
-          <option value="MEDIUM">MEDIUM</option>
-          <option value="LOW">LOW</option>
-        </select>
-      </label>
-      <button
-        className="update-button"
-        onClick={() => navigate(`/reestimate-ticket`)}
-      >
-        Re-estimation
-      </button>
-      <button className="update-button" onClick={() => handleUpdateClick()}>
+          <Select.Option value="HIGH">HIGH</Select.Option>
+          <Select.Option value="MEDIUM">MEDIUM</Select.Option>
+          <Select.Option value="LOW">LOW</Select.Option>
+        </Select>
+      </Form.Item>
+      <Button type="primary" onClick={handleUpdateClick}>
         Update
-      </button>
-    </div>
+      </Button>
+    </Form>
   );
 };
 

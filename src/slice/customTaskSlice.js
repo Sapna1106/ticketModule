@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const CustomTaskSlice = createSlice({
-  name: 'dynamicForm',
+  name: 'customFields',
   initialState: {
     fields: [],
     formData: {},
